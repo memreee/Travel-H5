@@ -1,0 +1,12 @@
+.poster{overflow:hidden}
+.has-motion{scroll-behavior:auto!important}
+.result.share-pending .share-sheet{visibility:hidden;pointer-events:none;animation:none;opacity:0;transform:translateY(100%)}
+.motion-layers{position:absolute;inset:0;pointer-events:none;z-index:1}
+.motion-item{position:absolute;overflow:visible;transform-origin:50% 50%;pointer-events:none;will-change:transform,opacity}
+.motion-item image{pointer-events:none}
+.carousel{z-index:2}.hotspot,.tasks,.balance{z-index:3}.demo{z-index:5}
+.motion-ready .second-row-background{display:none}
+.motion-ready .carousel-one,.motion-ready .carousel-two{background:transparent!important}
+.auto-scroll{position:fixed;z-index:7;left:max(12px,calc((100vw - 540px)/2 + 12px));bottom:max(14px,env(safe-area-inset-bottom));min-height:36px;padding:8px 13px;border:1px solid #ffffff60;border-radius:22px;background:#173e36d9;color:#fff;font-size:12px;backdrop-filter:blur(10px);box-shadow:0 2px 14px #0002}
+.auto-scroll[data-state="paused"]{background:#ffdf57;color:#5d5019;border-color:#ffeb9e}
+@media(prefers-reduced-motion:reduce){.motion-layers{display:none}}
