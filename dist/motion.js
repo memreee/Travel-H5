@@ -2,7 +2,7 @@
 (() => {
  const data=window.TRAVEL_MOTION_ASSETS;
  const poster=document.querySelector('.poster'),background=document.querySelector('.long-image');
- if(!data||matchMedia('(prefers-reduced-motion: reduce)').matches){background.src='assets/poster.jpg';return}
+ if(!data||matchMedia('(prefers-reduced-motion: reduce)').matches){background.src='assets/poster.jpg';window.TRAVEL_MOTION_BOOT?.finish('static');return}
  const ns='http://www.w3.org/2000/svg',root=document.createElement('div');
  root.className='motion-layers';root.setAttribute('aria-hidden','true');root.style.visibility='hidden';
  const tails={
@@ -27,7 +27,7 @@
  function image(src,w,h){return el('image',{href:src,width:w,height:h})}
  function polygon(points){return 'M'+points.map(p=>p.join(' ')).join(' L')+' Z'}
  function clipImage(src,w,h,id,defs,path){const clip=el('clipPath',{id});clip.append(el('path',{d:path}));defs.append(clip);const art=image(src,w,h);art.setAttribute('clip-path',`url(#${id})`);return art}
- function vectorD(paths,left,top){return paths.map(p=>{if(!p.knots.length)return '';const point=a=>`${(a[0]-left).toFixed(3)} ${(a[1]-top).toFixed(3)}`;let d=`M ${point(p.knots[0][1])}`;for(let i=1;i<p.knots.length;i++)d+=` C ${point(p.knots[i-1][2])} ${point(p.knots[i][0])} ${point(p.knots[i][1])}`;if(p.closed){const first=p.knots[0],last=p.knots.at(-1);d+=` C ${point(last[2])} ${point(first[0])} ${point(first[1])} Z`}return d}).join(' ')}
+ function vectorD(paths,left,top){return paths.map(p=>{if(!p.knots.length)return '';const point=a=>`${(a[0]-left).toFixed(3)} ${(a[1]-top).toFixed(3)}`;let d=`M ${point(p.knots[0][1])}`;for(let i=1;i<p.knots.length;i++)d+=` C ${point(p.knots[i-1][2])} ${point(p.knots[i][0])} ${point(p.knots[i][1])}`;if(p.closed){const first=p.knots[0],last=p.knots[p.knots.length-1];d+=` C ${point(last[2])} ${point(first[0])} ${point(first[1])} Z`}return d}).join(' ')}
  const items=data.map(a=>{
   const [left,top]=a.bbox,[w,h]=a.size,src=`assets/motion/layer-${a.index}.png`;
   const node=el('svg',{viewBox:`0 0 ${w} ${h}`,class:`motion-item motion-${a.index}`});
@@ -122,6 +122,7 @@
   for(const carousel of window.TRAVEL_CAROUSELS||[])carousel.tick(t,dt,modal);
  }
  function frame(t){
+  if(window.TRAVEL_MOTION_BOOT?.fallback)return;
   requestAnimationFrame(frame);if(lastFrame&&t-lastFrame<32)return;const dt=lastFrame?Math.min((t-lastFrame)/1000,.1):0;lastFrame=t;
   if(document.hidden){goal=scrollY;return}
   const modal=!document.querySelector('#result').hidden||document.querySelector('#dialog').open;
@@ -134,8 +135,11 @@
   else{goal=Math.min(max,goal+speed*dt);lastWritten=goal;lastAutoAt=t;window.scrollTo(0,goal);updateControl('playing')}
   paint(t,dt,modal);
  }
- const sources=[...new Set(data.map(a=>`assets/motion/layer-${a.index}.png`)),'assets/motion/clean-poster.jpg'];
- Promise.all(sources.map(src=>new Promise((resolve,reject)=>{const im=new Image();im.onload=resolve;im.onerror=reject;im.src=src}))).then(()=>{
+ // Start as soon as the first scene is ready. Later SVG images load independently.
+ const heroLayers=new Set([14,28,29,30,35,123,127,128,129]);
+ const sources=[...new Set(data.filter(a=>heroLayers.has(a.index)).map(a=>`assets/motion/layer-${a.index}.png`)),'assets/motion/clean-poster.jpg'];
+ Promise.all(sources.map(src=>new Promise((resolve,reject)=>{const im=new Image();im.fetchPriority='high';im.onload=resolve;im.onerror=reject;im.src=src}))).then(()=>{
+  if(window.TRAVEL_MOTION_BOOT?.fallback)return;
   poster.insertBefore(root,poster.querySelector('.carousel'));background.src='assets/motion/clean-poster.jpg';poster.classList.add('motion-ready');document.querySelector('.second-row-background').hidden=true;
   document.documentElement.classList.add('has-motion');goal=scrollY;manualUntil=performance.now()+900;
   addEventListener('wheel',manual,{passive:true});addEventListener('touchmove',manual,{passive:true});
@@ -143,6 +147,6 @@
   const release=()=>{holding=false;manual()};addEventListener('pointerup',release,{passive:true});addEventListener('pointercancel',release,{passive:true});
   addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(e.key))manual()});
   addEventListener('scroll',()=>{if(Math.abs(scrollY-lastWritten)>2||performance.now()-lastAutoAt>180)manual()},{passive:true});
-  addEventListener('resize',manual,{passive:true});updateControl('waiting');requestAnimationFrame(frame);
- }).catch(()=>{background.src='assets/poster.jpg';console.warn('Motion assets unavailable; using the complete static poster.')});
+  addEventListener('resize',manual,{passive:true});updateControl('waiting');paint(performance.now(),0,false);window.TRAVEL_MOTION_BOOT?.finish('ready');requestAnimationFrame(frame);
+ }).catch(()=>{if(window.TRAVEL_MOTION_BOOT)window.TRAVEL_MOTION_BOOT.fail('asset-error');else background.src='assets/poster.jpg';console.warn('Motion assets unavailable; using the complete static poster.')});
 })();
