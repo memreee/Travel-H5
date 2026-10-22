@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#51a9fa"><title>把自由写进路上 · 旅行目的地抽签</title><meta name="description" content="把自由写进路上，抽取属于你的下一站。"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="motion.css"></head>
+<body><main id="poster" class="poster" aria-label="把自由写进路上旅行活动"><img class="long-image" fetchpriority="high" src="assets/motion/clean-poster.jpg" width="1080" height="12734" alt="把自由写进路上。参与方式、旅行话题灵感、目的地抽取、活动奖励与积分任务。"><noscript><style>.long-image{display:none}.static-poster{display:block;width:100%}</style><img class="static-poster" src="assets/poster.jpg" alt="把自由写进路上旅行活动"></noscript>
+<div class="second-row-background" aria-hidden="true"><img src="assets/second-row-background.png" alt=""></div>
+<section class="carousel carousel-one" tabindex="0" aria-label="一个人的旅行时间，左右滑动循环浏览"><div class="carousel-track"></div></section>
+<section class="carousel carousel-two" tabindex="0" aria-label="没有计划的一天，左右滑动循环浏览"><div class="carousel-track"></div></section>
+<button class="hotspot" style="left:2%;top:35.1%;width:24%;height:1.25%" data-action="publish" data-topic="一个人的旅行时间" aria-label="去发布：一个人的旅行时间"></button>
+<button class="hotspot" style="left:69%;top:42.8%;width:25%;height:1.25%" data-action="publish" data-topic="没有计划的一天" aria-label="去发布：没有计划的一天"></button>
+<button class="hotspot door" style="left:25%;top:53.5%;width:50%;height:8.8%" data-action="destination" aria-label="打开旅行之门，抽取目的地"></button>
+<button class="hotspot" style="left:35%;top:61.2%;width:32%;height:1.6%" data-action="destination" aria-label="点击抽取旅行目的地"></button>
+<button class="hotspot" style="left:33%;top:85.5%;width:35%;height:1.7%" data-action="lottery" aria-label="点击模拟抽奖"></button>
+<section class="tasks" aria-label="做任务得积分"><div id="task-list"></div></section><div class="balance" id="balance" aria-live="polite"></div>
+</main>
+<div id="result" class="result" hidden role="dialog" aria-modal="true" aria-label="目的地抽签结果及分享"><button class="result-close" aria-label="关闭抽签结果">×</button><div class="ticket-stage"><svg class="hanging-cord" aria-hidden="true"><path/><path/></svg><svg id="ticket" role="img" viewBox="110 280 860 1165"><defs><clipPath id="dali-outline"><rect x="174" y="359" width="734" height="1077" rx="100"/><path d="M122 542 L753 387 L955 1259 L312 1400 Z M556 420 L574 350 L609 354 L626 309 Q640 283 666 305 Q690 320 674 344 L653 374 L710 381 L700 435 Z"/></clipPath></defs><image id="ticket-art" width="1080" height="1913"/></svg><p class="drawing" hidden>正在寻找你的下一站…</p><button id="again" class="again">再抽一次 ↻</button></div>
+<section class="share-sheet" aria-label="分享面板"><header>分享至<button id="close-share" aria-label="关闭分享面板">×</button></header><div class="share-row"><button data-share="私信好友"><i class="red">➤</i><span>私信好友</span></button><button data-share="微信好友"><i class="wechat">●●</i><span>微信好友</span></button><button data-share="朋友圈"><i class="moments">◉</i><span>朋友圈</span></button><button data-share="QQ好友"><i class="qq">♟</i><span>QQ好友</span></button><button data-share="QQ空间"><i class="qzone">★</i><span>QQ空间</span></button></div><div class="share-row secondary"><button data-share="系统分享"><i>↗</i><span>系统分享</span></button><button id="copy"><i>↗</i><span>复制链接</span></button><button id="save"><i>▧</i><span>保存签图</span></button><button id="topic"><i>❞</i><span>发布笔记</span></button><button id="more"><i>♧</i><span>分享说明</span></button></div><p class="share-hint">长按签图可保存 · 分享给朋友，一起出发</p></section></div>
+<dialog id="dialog"><button class="dialog-close" aria-label="关闭弹窗">×</button><div id="dialog-content"></div></dialog><div id="toast" role="status" hidden></div><script>
+(function(){
+ var fallback=false,timer;
+ var page=document.querySelector('.poster'),background=document.querySelector('.long-image');
+ function finish(state){clearTimeout(timer);document.documentElement.setAttribute('data-motion-state',state||'ready')}
+ function fail(reason){
+  if(fallback)return;fallback=true;window.TRAVEL_MOTION_BOOT.fallback=true;
+  finish('static-'+reason);background.src='assets/poster.jpg';
+  var layers=document.querySelector('.motion-layers');if(layers)layers.parentNode.removeChild(layers);
+  page.classList.remove('motion-ready');
+  var patch=document.querySelector('.second-row-background');if(patch)patch.hidden=false;
+ }
+ window.TRAVEL_MOTION_BOOT={finish:finish,fail:fail,fallback:false};
+ document.documentElement.setAttribute('data-motion-state','loading');
+ timer=setTimeout(function(){fail('timeout')},12000);
+ window.addEventListener('error',function(e){if(/motion(?:-data|-settings)?\.js/.test(e.filename||''))fail('script-error')});
+})();
+</script><script src="app.js"></script><script src="carousel.js"></script><script src="motion-data.js"></script><script src="motion-settings.js"></script><script src="motion.js?v=mobile2"></script></body></html>

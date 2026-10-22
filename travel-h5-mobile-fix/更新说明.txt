@@ -1,0 +1,1 @@
+解压后，在 GitHub 仓库最外层（能看到原 dist 文件夹的位置）点击 Add file → Upload files。把本包中的整个 dist 文件夹拖进去，保留目录结构，提交 Commit changes 即可覆盖这 3 个同路径文件。不要在已有 dist 目录中再上传一层 dist。原有图片和其他文件都保留。等待 Pages 部署绿色勾后，用原链接加 ?v=mobile2 打开测试。
